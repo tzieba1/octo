@@ -1,0 +1,306 @@
+# Issue and milestone tracking configuration
+tracker:
+  provider: github  # github | gitlab | gitea
+  
+  # Label definitions to synchronize across repositories
+  labels:
+    # Epic and cross-repo labels
+    - name: epic
+      color: "7057ff"
+      description: "Cross-repository epic"
+    
+    - name: cross-repo
+      color: "0052cc"
+      description: "Spans multiple repositories"
+    
+    # Release management
+    - name: release
+      color: "0e8a16"
+      description: "Release tracking"
+    
+    - name: release-blocker
+      color: "d73a4a"
+      description: "Blocks release"
+    
+    - name: hotfix
+      color: "ff4500"
+      description: "Emergency hotfix"
+    
+    # Orchestration
+    - name: orchestration
+      color: "fbca04"
+      description: "Orchestration task"
+    
+    - name: dependency
+      color: "c5def5"
+      description: "Dependency update"
+    
+    # Priority labels
+    - name: "priority: critical"
+      color: "d73a4a"
+      description: "Critical priority"
+    
+    - name: "priority: high"
+      color: "ff8c00"
+      description: "High priority"
+    
+    - name: "priority: medium"
+      color: "fbca04"
+      description: "Medium priority"
+    
+    - name: "priority: low"
+      color: "0e8a16"
+      description: "Low priority"
+    
+    # Status labels
+    - name: "status: in-progress"
+      color: "1d76db"
+      description: "Work in progress"
+    
+    - name: "status: review"
+      color: "5319e7"
+      description: "In review"
+    
+    - name: "status: blocked"
+      color: "d73a4a"
+      description: "Blocked"
+    
+    - name: "status: ready"
+      color: "0e8a16"
+      description: "Ready for deployment"
+    
+    # Type labels
+    - name: "type: bug"
+      color: "d73a4a"
+      description: "Something isn't working"
+    
+    - name: "type: feature"
+      color: "a2eeef"
+      description: "New feature or request"
+    
+    - name: "type: documentation"
+      color: "0075ca"
+      description: "Improvements or additions to documentation"
+    
+    - name: "type: maintenance"
+      color: "fcba03"
+      description: "Maintenance task"
+
+  # Epic template for cross-repo epics
+  epic_template: |
+    ## Epic: {{title}}
+    
+    {{description}}
+    
+    ### Objectives
+    - [ ] Objective 1
+    - [ ] Objective 2
+    - [ ] Objective 3
+    
+    ### Acceptance Criteria
+    - [ ] Criteria 1
+    - [ ] Criteria 2
+    - [ ] Criteria 3
+    
+    ### Repositories Involved
+    {{#repositories}}
+    - [ ] {{name}}
+    {{/repositories}}
+    
+    ### Related Issues
+    <!-- This section will be automatically updated -->
+    {{#issues}}
+    - {{repo}}: #{{number}} - {{title}}
+    {{/issues}}
+    
+    ### Timeline
+    - **Start Date**: {{start_date}}
+    - **Target Date**: {{target_date}}
+    - **Actual Date**: TBD
+    
+    ### Notes
+    <!-- Add any additional notes here -->
+    
+    ---
+    *This epic is managed by repo-orchestrator*
+
+  # Milestone template
+  milestone_template: |
+    ## Milestone: {{title}}
+    
+    {{description}}
+    
+    **Due Date**: {{due_date}}
+    
+    ### Goals
+    - Goal 1
+    - Goal 2
+    - Goal 3
+    
+    ### Success Metrics
+    - Metric 1
+    - Metric 2
+    
+    ---
+    *Coordinated milestone across repositories*
+
+  # Issue templates for different types
+  issue_templates:
+    bug:
+      name: Bug Report
+      about: Create a report to help us improve
+      title: "[BUG] "
+      labels: ["type: bug"]
+      body: |
+        **Describe the bug**
+        A clear and concise description of what the bug is.
+        
+        **To Reproduce**
+        Steps to reproduce the behavior:
+        1. Go to '...'
+        2. Click on '....'
+        3. See error
+        
+        **Expected behavior**
+        What you expected to happen.
+        
+        **Screenshots**
+        If applicable, add screenshots.
+        
+        **Environment:**
+        - Repository: 
+        - Version:
+        - Environment:
+    
+    feature:
+      name: Feature Request
+      about: Suggest an idea for this project
+      title: "[FEATURE] "
+      labels: ["type: feature"]
+      body: |
+        **Is your feature request related to a problem?**
+        A clear description of the problem.
+        
+        **Describe the solution you'd like**
+        What you want to happen.
+        
+        **Describe alternatives you've considered**
+        Other solutions you've considered.
+        
+        **Additional context**
+        Any other context or screenshots.
+    
+    release:
+      name: Release Checklist
+      about: Checklist for release preparation
+      title: "Release v{{version}}"
+      labels: ["release"]
+      body: |
+        ## Release Checklist for v{{version}}
+        
+        ### Pre-release
+        - [ ] Version numbers updated
+        - [ ] CHANGELOG.md updated
+        - [ ] Documentation updated
+        - [ ] All tests passing
+        - [ ] Security scan completed
+        
+        ### Release
+        - [ ] Create git tag
+        - [ ] Build artifacts
+        - [ ] Publish packages
+        - [ ] Create GitHub release
+        
+        ### Deployment
+        - [ ] Deploy to staging
+        - [ ] Smoke tests on staging
+        - [ ] Deploy to production
+        - [ ] Smoke tests on production
+        
+        ### Post-release
+        - [ ] Announce release
+        - [ ] Update dependent repositories
+        - [ ] Close milestone
+        - [ ] Archive release artifacts
+    
+    hotfix:
+      name: Hotfix
+      about: Emergency fix for production
+      title: "[HOTFIX] "
+      labels: ["hotfix", "priority: critical"]
+      body: |
+        ## Hotfix Required
+        
+        **Severity**: Critical / High / Medium
+        
+        **Affected Version**: v{{version}}
+        
+        **Issue Description**
+        Describe the production issue.
+        
+        **Proposed Fix**
+        Describe the fix.
+        
+        **Testing**
+        - [ ] Unit tests added/updated
+        - [ ] Manual testing completed
+        - [ ] Regression testing completed
+        
+        **Rollback Plan**
+        How to rollback if the fix fails.
+        
+        **Affected Repositories**
+        - [ ] Repository 1
+        - [ ] Repository 2
+
+  # Automation rules
+  automation:
+    # Auto-close stale issues
+    stale_issues:
+      enabled: true
+      days_until_stale: 60
+      days_until_close: 7
+      exempt_labels:
+        - pinned
+        - security
+        - epic
+      stale_label: stale
+      message: |
+        This issue has been automatically marked as stale because it has not had recent activity.
+        It will be closed if no further activity occurs. Thank you for your contributions.
+    
+    # Auto-label based on paths
+    auto_label:
+      enabled: true
+      rules:
+        - paths: ["*.md", "docs/**"]
+          labels: ["type: documentation"]
+        - paths: ["tests/**", "*_test.py"]
+          labels: ["type: test"]
+        - paths: [".github/**"]
+          labels: ["type: ci"]
+    
+    # Auto-assign based on CODEOWNERS
+    auto_assign:
+      enabled: true
+      use_codeowners: true
+      
+  # Project board configuration
+  project_boards:
+    - name: Release Planning
+      description: Planning and tracking releases
+      columns:
+        - Backlog
+        - To Do
+        - In Progress
+        - Review
+        - Done
+    
+    - name: Epic Tracking
+      description: Cross-repository epics
+      columns:
+        - Proposed
+        - Approved
+        - In Progress
+        - Blocked
+        - Complete

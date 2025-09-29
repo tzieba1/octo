@@ -1,0 +1,132 @@
+# .github/workflows/orchestrate-release.yml
+name: Orchestrate Multi-Repository Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_type:
+        description: 'Release type'
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+      source_repository:
+        description: 'Source repository to release'
+        required: true
+        type: string
+      dry_run:
+        description: 'Perform dry run'
+        required: true
+        type: boolean
+        default: true
+
+jobs:
+  analyze-dependencies:
+    name: Analyze Dependencies
+    runs-on: ubuntu-latest
+    outputs:
+      release_plan: ${{ steps.analyze.outputs.plan }}
+      affected_repos: ${{ steps.analyze.outputs.affected }}
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+      
+      - name: Analyze impact
+        id: analyze
+        run: |
+          python << 'EOF'
+          import json
+          import yaml
+          from orchestrator import VersionCoordinator
+          
+          coordinator = VersionCoordinator()
+          plan = coordinator.coordinate_release(
+              '${{ inputs.source_repository }}',
+              '${{ inputs.release_type }}'
+          )
+          
+          with open('release_plan.json', 'w') as f:
+              json.dump(plan, f)
+          
+          print(f"::set-output name=plan::{json.dumps(plan)}")
+          print(f"::set-output name=affected::{','.join([r['repo'] for r in plan['affected']])}")
+          EOF
+      
+      - name: Upload release plan
+        uses: actions/upload-artifact@v3
+        with:
+          name: release-plan
+          path: release_plan.json
+
+  execute-releases:
+    name: Execute Releases
+    needs: analyze-dependencies
+    runs-on: ubuntu-latest
+    if: ${{ inputs.dry_run == false }}
+    strategy:
+      matrix:
+        repository: ${{ fromJson(needs.analyze-dependencies.outputs.release_plan).execution_order }}
+      max-parallel: 1
+    
+    steps:
+      - name: Checkout orchestrator
+        uses: actions/checkout@v4
+      
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/${{ matrix.repository }}
+          path: repos/${{ matrix.repository }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Configure Git
+        run: |
+          git config --global user.name "Repo Orchestrator"
+          git config --global user.email "orchestrator@example.com"
+      
+      - name: Execute release
+        run: |
+          ./scripts/release/coordinate-release.sh \
+            ${{ needs.analyze-dependencies.outputs.release_plan.source.new_version }} \
+            false
+
+  update-dependencies:
+    name: Update Dependencies
+    needs: [analyze-dependencies, execute-releases]
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Update dependency versions
+        run: |
+          ./scripts/deps/update-cross-deps.sh \
+            ${{ inputs.source_repository }} \
+            ${{ needs.analyze-dependencies.outputs.release_plan.source.new_version }}
+      
+      - name: Create PR
+        uses: peter-evans/create-pull-request@v5
+        with:
+          title: "chore: update dependencies after ${{ inputs.source_repository }} release"
+          body: |
+            Updates dependency versions after releasing ${{ inputs.source_repository }}
+            
+            Release details:
+            - Repository: ${{ inputs.source_repository }}
+            - Version: ${{ needs.analyze-dependencies.outputs.release_plan.source.new_version }}
+            - Type: ${{ inputs.release_type }}
+          branch: deps/update-${{ inputs.source_repository }}
+          commit-message: "chore: update dependencies"

@@ -1,0 +1,59 @@
+# .github/workflows/self-update.yml
+name: Self Update
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  self-update:
+    name: Update Orchestrator
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Update version
+        if: contains(github.event.head_commit.message, 'release')
+        run: |
+          # Extract version from commit message
+          VERSION=$(echo "${{ github.event.head_commit.message }}" | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+' || echo "")
+          
+          if [ -n "$VERSION" ]; then
+              # Update self version
+              yq e ".orchestrator.version = \"${VERSION#v}\"" -i .orchestrator/self.yaml
+              
+              # Create tag
+              git tag -a "$VERSION" -m "Release $VERSION"
+              git push origin "$VERSION"
+          fi
+      
+      - name: Run tests
+        run: |
+          pip install -r requirements.txt
+          python -m pytest tests/ || true
+      
+      - name: Update documentation
+        run: |
+          python << 'EOF'
+          import yaml
+          from datetime import datetime
+          
+          # Update README with current version
+          with open('.orchestrator/self.yaml') as f:
+              config = yaml.safe_load(f)
+          
+          version = config['orchestrator']['version']
+          
+          # Update badge in README if it exists
+          # This is a placeholder for actual documentation update
+          print(f"Current orchestrator version: v{version}")
+          EOF
