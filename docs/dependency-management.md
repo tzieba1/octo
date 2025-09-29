@@ -178,6 +178,7 @@ mermaid_diagram = resolver.export_to_mermaid()
 ```
 
 Result:
+
 ```mermaid
 graph TD
   app -->|"^2.0.0"| backend
@@ -194,6 +195,7 @@ impact = resolver.analyze_impact('shared-lib', '2.0.0')
 ```
 
 Result:
+
 ```json
 {
   "repository": "shared-lib",
@@ -258,22 +260,28 @@ dependencies:
 ### Common Issues
 
 1. **Circular Dependencies**
-   ```
+
+   ```log
    ERROR: Circular dependency detected: A -> B -> C -> A
    ```
+
    Solution: Refactor to break the cycle
 
 2. **Version Conflicts**
-   ```
+
+   ```log
    ERROR: Incompatible versions for shared-lib
    ```
+
    Solution: Update version specs or use resolution strategy
 
 3. **Missing Dependencies**
-   ```
-   ERROR: Dependency 'auth-service' not found
-   ```
-   Solution: Ensure all dependencies are in `repositories.yaml`
+
+    ```log
+    ERROR: Dependency 'auth-service' not found
+    ```
+
+    Solution: Ensure all dependencies are in `repositories.yaml`
 
 ### Debug Commands
 
