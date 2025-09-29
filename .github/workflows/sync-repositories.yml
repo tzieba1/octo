@@ -1,0 +1,72 @@
+# .github/workflows/sync-repositories.yml
+name: Sync Repository Configuration
+
+on:
+  push:
+    paths:
+      - 'configs/repositories.yaml'
+  workflow_dispatch:
+
+jobs:
+  sync-config:
+    name: Synchronize Repository Configurations
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Validate configuration
+        run: |
+          python << 'EOF'
+          import yaml
+          from orchestrator import DependencyResolver
+          
+          # Validate YAML
+          with open('configs/repositories.yaml') as f:
+              config = yaml.safe_load(f)
+          
+          # Check for circular dependencies
+          resolver = DependencyResolver()
+          cycles = resolver.check_circular_dependencies()
+          
+          if cycles:
+              print("ERROR: Circular dependencies detected:")
+              for cycle in cycles:
+                  print(f"  {' -> '.join(cycle)}")
+              exit(1)
+          
+          print("Configuration is valid!")
+          EOF
+      
+      - name: Generate dependency graph
+        run: |
+          python << 'EOF'
+          from orchestrator import DependencyResolver
+          
+          resolver = DependencyResolver()
+          resolver.visualize_graph('dependency_graph.png')
+          
+          # Generate Mermaid diagram
+          mermaid = resolver.export_to_mermaid()
+          with open('dependency_graph.mmd', 'w') as f:
+              f.write(mermaid)
+          EOF
+      
+      - name: Update dependency lock
+        run: |
+          ./scripts/deps/track-dependencies.sh lock
+      
+      - name: Commit updates
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          
+          git add configs/dependencies.lock dependency_graph.png dependency_graph.mmd || true
+          git commit -m "chore: update dependency tracking [skip ci]" || true
+          git push || true

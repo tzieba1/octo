@@ -1,0 +1,80 @@
+# .github/workflows/health-check.yml
+name: Repository Health Check
+
+on:
+  schedule:
+    - cron: '0 9 * * 1'  # Every Monday at 9 AM
+  workflow_dispatch:
+
+jobs:
+  health-check:
+    name: Check Repository Health
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+      
+      - name: Clone repositories
+        run: |
+          mkdir -p repos
+          python << 'EOF'
+          import yaml
+          import subprocess
+          
+          with open('configs/repositories.yaml') as f:
+              config = yaml.safe_load(f)
+          
+          for repo_name, repo_config in config['repositories'].items():
+              url = repo_config['url']
+              subprocess.run(['git', 'clone', '--depth', '1', url, f'repos/{repo_name}'])
+          EOF
+      
+      - name: Generate health report
+        id: health
+        run: |
+          python << 'EOF'
+          from orchestrator import RepoHealthMonitor
+          
+          monitor = RepoHealthMonitor()
+          report = monitor.generate_health_report()
+          
+          with open('health_report.md', 'w') as f:
+              f.write(report)
+          
+          # Set outputs for issue creation
+          metrics = monitor.collect_metrics()
+          print(f"::set-output name=score::{metrics['health_score']:.1f}")
+          print(f"::set-output name=alerts::{len(metrics['alerts'])}")
+          EOF
+      
+      - name: Upload health report
+        uses: actions/upload-artifact@v3
+        with:
+          name: health-report
+          path: health_report.md
+      
+      - name: Create issue if unhealthy
+        if: ${{ steps.health.outputs.score < 70 || steps.health.outputs.alerts > 5 }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const report = fs.readFileSync('health_report.md', 'utf8');
+            
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Health Check Alert: Score ${steps.health.outputs.score}/100`,
+              body: report,
+              labels: ['health-check', 'automated']
+            });

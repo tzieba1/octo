@@ -1,0 +1,85 @@
+# .github/workflows/emergency-rollback.yml
+name: Emergency Rollback
+
+on:
+  workflow_dispatch:
+    inputs:
+      current_version:
+        description: 'Current version to rollback from'
+        required: true
+        type: string
+      target_version:
+        description: 'Target version to rollback to'
+        required: true
+        type: string
+      repositories:
+        description: 'Repositories to rollback (comma-separated or "all")'
+        required: true
+        type: string
+        default: 'all'
+      confirm:
+        description: 'Type ROLLBACK to confirm'
+        required: true
+        type: string
+
+jobs:
+  rollback:
+    name: Emergency Rollback
+    runs-on: ubuntu-latest
+    if: ${{ inputs.confirm == 'ROLLBACK' }}
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Setup environment
+        run: |
+          git config --global user.name "Emergency Rollback"
+          git config --global user.email "rollback@example.com"
+      
+      - name: Clone repositories
+        run: |
+          mkdir -p repos
+          repos="${{ inputs.repositories }}"
+          
+          if [ "$repos" = "all" ]; then
+              repos=$(yq e '.repositories | keys | join(",")' configs/repositories.yaml)
+          fi
+          
+          IFS=',' read -ra REPO_ARRAY <<< "$repos"
+          for repo in "${REPO_ARRAY[@]}"; do
+              git clone https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository_owner }}/$repo.git repos/$repo
+          done
+      
+      - name: Execute rollback
+        run: |
+          echo "ROLLBACK" | ./scripts/release/rollback-release.sh \
+            "${{ inputs.current_version }}" \
+            "${{ inputs.target_version }}" \
+            "${{ inputs.repositories }}"
+      
+      - name: Create incident issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `🚨 Emergency Rollback: ${inputs.current_version} → ${inputs.target_version}`,
+              body: `## Emergency Rollback Executed
+              
+              **From Version:** ${inputs.current_version}
+              **To Version:** ${inputs.target_version}
+              **Repositories:** ${inputs.repositories}
+              **Timestamp:** ${new Date().toISOString()}
+              **Initiated by:** @${context.actor}
+              
+              ### Next Steps
+              - [ ] Verify services are running correctly
+              - [ ] Check monitoring dashboards
+              - [ ] Create incident report
+              - [ ] Identify root cause
+              - [ ] Plan forward fix
+              `,
+              labels: ['incident', 'rollback', 'critical']
+            });

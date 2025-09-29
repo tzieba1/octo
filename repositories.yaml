@@ -1,0 +1,33 @@
+# repositories.yaml
+repositories:
+  contracts:
+    url: git@github.com:user/caddycart-contracts.git
+    version: 1.2.0
+    type: library
+    dependencies: []
+    
+  backend:
+    url: git@github.com:user/caddycart-backend.git
+    version: 2.1.0
+    type: service
+    dependencies:
+      - name: contracts
+        version: "^1.2.0"
+        type: compile
+    
+  platform:
+    url: git@github.com:user/caddycart-platform.git
+    version: 3.0.0
+    type: application
+    dependencies:
+      - name: backend
+        version: "^2.0.0"
+        type: runtime
+      - name: contracts
+        version: "^1.2.0"
+        type: compile
+
+dependency_rules:
+  resolution: highest-compatible
+  lock_strategy: conservative
+  update_policy: explicit

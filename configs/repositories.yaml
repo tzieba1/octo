@@ -1,0 +1,168 @@
+# Repository manifest - Define your multi-repo system here
+#
+# This file is the source of truth for your repository orchestration.
+# Update this file to add new repositories or modify dependencies.
+
+# Global dependency rules
+dependency_rules:
+  resolution: highest-compatible  # highest-compatible | exact | loose
+  lock_strategy: conservative     # conservative | aggressive
+  update_policy: explicit         # explicit | auto
+  conflict_resolution: fail       # fail | warn | auto-resolve
+
+# Repository definitions
+repositories:
+  # Example: Shared library used by multiple services
+  shared-lib:
+    url: git@github.com:yourorg/shared-lib.git
+    version: 1.2.0
+    type: library
+    description: Shared utilities and common components
+    maintainers:
+      - team-platform
+    dependencies: []
+    
+  # Example: Authentication service
+  auth-service:
+    url: git@github.com:yourorg/auth-service.git
+    version: 2.1.0
+    type: service
+    description: Authentication and authorization service
+    maintainers:
+      - team-security
+    dependencies:
+      - name: shared-lib
+        version: "^1.0.0"
+        type: compile
+    deployment:
+      environment: production
+      replicas: 3
+      
+  # Example: Backend API service
+  backend:
+    url: git@github.com:yourorg/backend.git
+    version: 3.0.0
+    type: service
+    description: Main backend API service
+    maintainers:
+      - team-backend
+    dependencies:
+      - name: shared-lib
+        version: "^1.0.0"
+        type: compile
+      - name: auth-service
+        version: "^2.0.0"
+        type: runtime
+    deployment:
+      environment: production
+      replicas: 5
+      
+  # Example: Frontend application
+  frontend:
+    url: git@github.com:yourorg/frontend.git
+    version: 4.2.0
+    type: application
+    description: Web frontend application
+    maintainers:
+      - team-frontend
+    dependencies:
+      - name: backend
+        version: "^3.0.0"
+        type: runtime
+    deployment:
+      environment: production
+      cdn: true
+      
+  # Example: Monitoring service
+  monitoring:
+    url: git@github.com:yourorg/monitoring.git
+    version: 1.5.0
+    type: service
+    description: System monitoring and alerting
+    maintainers:
+      - team-platform
+    dependencies:
+      - name: backend
+        version: "^3.0.0"
+        type: runtime
+      - name: auth-service
+        version: "^2.0.0"  
+        type: runtime
+    deployment:
+      environment: production
+      replicas: 2
+
+# Orchestration groups - Define groups of repos that should be managed together
+groups:
+  core:
+    description: Core platform services
+    repositories:
+      - shared-lib
+      - auth-service
+      - backend
+    
+  frontend:
+    description: Frontend applications
+    repositories:
+      - frontend
+    
+  infrastructure:
+    description: Infrastructure services
+    repositories:
+      - monitoring
+
+# Release trains - Define coordinated release schedules
+release_trains:
+  monthly:
+    schedule: "0 0 1 * *"  # First day of month
+    groups:
+      - core
+      - frontend
+    
+  quarterly:
+    schedule: "0 0 1 */3 *"  # Every 3 months
+    groups:
+      - infrastructure
+
+# Deployment environments
+environments:
+  development:
+    auto_deploy: true
+    approval_required: false
+    
+  staging:
+    auto_deploy: true
+    approval_required: false
+    smoke_tests: true
+    
+  production:
+    auto_deploy: false
+    approval_required: true
+    smoke_tests: true
+    canary_deployment: true
+    rollback_on_failure: true
+
+# Notification settings
+notifications:
+  channels:
+    - type: github
+      enabled: true
+      events:
+        - release
+        - rollback
+        - failure
+    
+    - type: slack
+      enabled: false
+      webhook: ${SLACK_WEBHOOK_URL}
+      events:
+        - release
+        - rollback
+    
+    - type: email
+      enabled: false
+      recipients:
+        - team@example.com
+      events:
+        - failure
+        - rollback
