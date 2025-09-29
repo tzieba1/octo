@@ -39,6 +39,7 @@ class ProviderInterface(ABC):
 ```
 
 Implementations:
+
 - `GitHubProvider`: Uses GitHub CLI and REST API
 - `GitLabProvider`: Uses GitLab API
 - `GiteaProvider`: Uses Gitea API
@@ -65,7 +66,7 @@ class DependencyResolver:
 
 Manages semantic versioning across repositories:
 
-```
+```uml
 ┌─────────────────────────┐
 │   Version Coordinator   │
 ├─────────────────────────┤
@@ -89,7 +90,7 @@ Manages semantic versioning across repositories:
 
 Cross-repository issue and epic management:
 
-```
+```uml
 ┌─────────────────────────┐
 │     Issue Tracker       │
 ├─────────────────────────┤
@@ -112,7 +113,7 @@ Cross-repository issue and epic management:
 
 Repository health and metrics collection:
 
-```
+```uml
 ┌─────────────────────────┐
 │    Health Monitor       │
 ├─────────────────────────┤
@@ -235,6 +236,7 @@ repositories:
 ### 3. Audit Trail
 
 All operations are tracked via:
+
 - Git commits (orchestration branches)
 - Git notes (metadata storage)
 - CI/CD logs (GitHub Actions)
@@ -321,6 +323,7 @@ def execute_release_plan(plan, dry_run=False):
 ### 3. State Reconciliation
 
 The orchestrator can detect and reconcile inconsistent states:
+
 - Version mismatches
 - Incomplete releases
 - Dependency conflicts

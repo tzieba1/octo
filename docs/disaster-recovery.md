@@ -181,6 +181,7 @@ rm configs/dependencies.lock
 **Symptoms**: Services failing after release
 
 **Recovery**:
+
 ```bash
 # 1. Immediate rollback
 ./scripts/release/rollback-release.sh v2.0.0 v1.9.9 all
@@ -198,6 +199,7 @@ gh issue create --title "Release v2.0.0 Failed" \
 **Symptoms**: Some services updated, others failed
 
 **Recovery**:
+
 ```bash
 # 1. Identify affected services
 ./scripts/orchestrate.py health
@@ -215,6 +217,7 @@ gh issue create --title "Release v2.0.0 Failed" \
 **Symptoms**: Services can't communicate due to version mismatch
 
 **Recovery**:
+
 ```python
 # 1. Analyze dependencies
 from orchestrator import DependencyResolver
