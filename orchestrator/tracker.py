@@ -188,7 +188,7 @@ This issue will be updated with links to related issues across repositories.
         
         return milestone_data
     
-    def link_related_issues(self, issue_links: List[Tuple[str, int, str, int]]) -> List[bool]:
+    def link_related_issues(self, issue_links: List[tuple[str, int, str, int]]) -> List[bool]:
         """
         Link related issues across repositories
         Args:

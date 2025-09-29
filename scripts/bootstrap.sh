@@ -77,15 +77,21 @@ init_repository() {
     fi
     
     # Set up git notes refs
-    git config notes.displayRef "refs/notes/epics"
+    git config --unset-all notes.displayRef 2>/dev/null || true
+    git config --add notes.displayRef "refs/notes/epics"
     git config --add notes.displayRef "refs/notes/metrics"
     git config --add notes.displayRef "refs/notes/releases"
     log_success "Git notes configured"
     
     # Set up git hooks
-    if [ -d hooks/ ]; then
+    if [ -d .orchestrator/hooks/ ]; then
         log_info "Installing git hooks..."
-        cp hooks/* .git/hooks/
+        mkdir -p .git/hooks
+        cp .orchestrator/hooks/*.sh .git/hooks/
+        # Remove .sh extension for git hooks
+        for hook in .git/hooks/*.sh; do
+            mv "$hook" "${hook%.sh}"
+        done
         chmod +x .git/hooks/*
         log_success "Git hooks installed"
     fi
@@ -358,12 +364,40 @@ EOF
 init_self_management() {
     log_info "Initializing self-management..."
     
-    # Create initial commit
+    # Stage all files
     git add -A
-    git commit -m "Initial orchestrator setup" || true
     
-    # Create initial tag
-    git tag -a v0.1.0 -m "Initial version" || true
+    # Check if there are changes to commit
+    if git diff-index --quiet HEAD -- 2>/dev/null; then
+        log_info "No changes to commit (already initialized)"
+    else
+        # Commit with proper conventional format
+        git commit -m "chore(bootstrap): initialize orchestrator environment
+
+Initialize repository with:
+- Directory structure for multi-repo orchestration
+- Git hooks for conventional commits and version tracking
+- Python virtual environment with dependencies
+- Configuration templates for repositories and tracking
+- Initial orchestrator self-management setup
+
+Refs: #init" 2>/dev/null || {
+            log_warning "Commit failed - may already be initialized"
+            return 0
+        }
+        log_success "Created initial commit"
+    fi
+    
+    # Create version tag if it doesn't exist
+    if ! git rev-parse v0.1.0 >/dev/null 2>&1; then
+        git tag -a v0.1.0 -m "chore: release orchestrator v0.1.0" 2>/dev/null || {
+            log_warning "Tag v0.1.0 may already exist"
+            return 0
+        }
+        log_success "Created tag v0.1.0"
+    else
+        log_info "Tag v0.1.0 already exists"
+    fi
     
     log_success "Self-management initialized"
 }
