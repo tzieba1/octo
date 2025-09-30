@@ -122,7 +122,7 @@ tracker:
     <!-- Add any additional notes here -->
     
     ---
-    *This epic is managed by repo-orchestrator*
+    *This epic is managed by repo-octo*
 
   # Milestone template
   milestone_template: |

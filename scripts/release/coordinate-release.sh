@@ -26,7 +26,7 @@ fi
 
 # Load release plan
 load_release_plan() {
-    if [ ! -f ".orchestrator/releases/$VERSION.yaml" ]; then
+    if [ ! -f ".octo/releases/$VERSION.yaml" ]; then
         echo -e "${RED}Release plan for $VERSION not found${NC}"
         echo "Run prepare-release.sh first"
         exit 1
@@ -34,7 +34,7 @@ load_release_plan() {
     
     python3 -c "
 import yaml
-with open('.orchestrator/releases/$VERSION.yaml') as f:
+with open('.octo/releases/$VERSION.yaml') as f:
     data = yaml.safe_load(f)
     for repo in data['release']['repositories']:
         print(repo['name'])
@@ -127,13 +127,13 @@ update_release_status() {
 import yaml
 from datetime import datetime
 
-with open('.orchestrator/releases/$version.yaml', 'r') as f:
+with open('.octo/releases/$version.yaml', 'r') as f:
     data = yaml.safe_load(f)
 
 data['release']['status'] = '$status'
 data['release']['completed'] = datetime.now().isoformat()
 
-with open('.orchestrator/releases/$version.yaml', 'w') as f:
+with open('.octo/releases/$version.yaml', 'w') as f:
     yaml.dump(data, f, default_flow_style=False)
 EOF
 }

@@ -11,11 +11,11 @@ This guide covers emergency procedures, rollback strategies, and recovery proces
 Immediately halt all orchestration activities:
 
 ```bash
-# Stop all orchestrator processes
+# Stop all octo processes
 make emergency-stop
 
 # Or manually
-pkill -f orchestrator
+pkill -f octo
 pkill -f orchestrate.py
 ```
 
@@ -88,7 +88,7 @@ git push --force-with-lease origin main
 
 ### 3. Dependency-Aware Rollback
 
-The orchestrator ensures dependent services are rolled back in the correct order:
+The octo ensures dependent services are rolled back in the correct order:
 
 ```python
 # Automatic dependency ordering
@@ -132,7 +132,7 @@ make pull-all
 #### Restore from Git History
 
 ```bash
-# Restore orchestrator configuration
+# Restore octo configuration
 git checkout HEAD~1 -- configs/repositories.yaml
 
 # Restore from specific date
@@ -146,7 +146,7 @@ git notes --ref=metrics show HEAD~10
 
 ```bash
 # Restore from backup
-tar -xzf orchestrator-backup-20240114.tar.gz
+tar -xzf octo-backup-20240114.tar.gz
 cp -r backup/configs/* configs/
 
 # Restore repository states
@@ -220,7 +220,7 @@ gh issue create --title "Release v2.0.0 Failed" \
 
 ```python
 # 1. Analyze dependencies
-from orchestrator import DependencyResolver
+from octo import DependencyResolver
 resolver = DependencyResolver()
 conflicts = resolver.resolve_version_conflicts()
 
@@ -257,7 +257,7 @@ done
 ```bash
 # Collect emergency metrics
 python << EOF
-from orchestrator import RepoHealthMonitor
+from octo import RepoHealthMonitor
 monitor = RepoHealthMonitor()
 metrics = monitor.collect_metrics()
 
@@ -299,7 +299,7 @@ EOF
 ### 2. Update Runbooks
 
 ```yaml
-# Add to .orchestrator/runbooks/
+# Add to .octo/runbooks/
 runbook:
   scenario: "Service Communication Failure"
   symptoms:
@@ -375,14 +375,14 @@ jobs:
         run: |
           tar -czf backup-$(date +%Y%m%d).tar.gz \
             configs/ \
-            .orchestrator/ \
+            .octo/ \
             .git/notes
 EOF
 ```
 
 ## Emergency Contacts
 
-Configure in `.orchestrator/emergency.yaml`:
+Configure in `.octo/emergency.yaml`:
 
 ```yaml
 contacts:

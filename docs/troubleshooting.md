@@ -29,7 +29,7 @@ git config --get user.email && echo "Git email: $(git config --get user.email)"
 echo "Git notes refs: $(git config --get-all notes.displayRef | wc -l)"
 echo ""
 echo "=== Directory Structure ==="
-ls -ld .orchestrator orchestrator configs scripts 2>/dev/null || echo "Missing directories"
+ls -ld .octo octo configs scripts 2>/dev/null || echo "Missing directories"
 SCRIPT
 chmod +x diagnose.sh
 ./diagnose.sh
@@ -133,7 +133,7 @@ git commit -m "type(scope): description"
 # feat, fix, docs, style, refactor, perf, test, chore, build, ci, orchestration
 
 # Examples:
-git commit -m "chore(bootstrap): initialize orchestrator"
+git commit -m "chore(bootstrap): initialize octo"
 git commit -m "feat(release): add coordination system"
 git commit -m "fix(deps): resolve circular dependency"
 ```
@@ -246,7 +246,7 @@ ls -l .git/hooks/pre-commit
 
 ```bash
 # Reinstall hooks
-cp .orchestrator/hooks/*.sh .git/hooks/
+cp .octo/hooks/*.sh .git/hooks/
 for hook in .git/hooks/*.sh; do
     mv "$hook" "${hook%.sh}"
 done
@@ -324,7 +324,7 @@ ERROR: Circular dependency detected: A -> B -> C -> A
 
 ```bash
 python3 << 'EOF'
-from orchestrator import DependencyResolver
+from octo import DependencyResolver
 resolver = DependencyResolver()
 cycles = resolver.check_circular_dependencies()
 print("Cycles found:", cycles)
@@ -515,7 +515,7 @@ pytest --version
 **Symptom:**
 
 ```log
-ImportError: No module named 'orchestrator'
+ImportError: No module named 'octo'
 ```
 
 **Solution:**
@@ -525,7 +525,7 @@ ImportError: No module named 'orchestrator'
 export PYTHONPATH="${PWD}:${PYTHONPATH}"
 
 # Or run from project root
-cd /path/to/repo-orchestrator
+cd /path/to/repo-octo
 pytest tests/
 ```
 
@@ -577,7 +577,7 @@ Python: $(python3 --version)
 Git: $(git --version)
 
 === Orchestrator ===
-$(ls -la .orchestrator/)
+$(ls -la .octo/)
 $(git config --get-all notes.displayRef)
 
 === Python Packages ===
@@ -638,11 +638,11 @@ python3 scripts/orchestrate.py health
 
 ```bash
 # Backup configurations
-tar -czf orchestrator-backup-$(date +%Y%m%d).tar.gz \
-  configs/ .orchestrator/ .git/config
+tar -czf octo-backup-$(date +%Y%m%d).tar.gz \
+  configs/ .octo/ .git/config
 
 # Store safely
-mv orchestrator-backup-*.tar.gz ~/backups/
+mv octo-backup-*.tar.gz ~/backups/
 ```
 
 ### Keep Documentation Updated

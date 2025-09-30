@@ -8,7 +8,7 @@ Repo Orchestrator is a Git-native multi-repository management system that levera
 
 ### 1. Git-Native Data Storage
 
-Instead of relying on external databases, the orchestrator stores metadata directly in Git:
+Instead of relying on external databases, the octo stores metadata directly in Git:
 
 - **Git Notes**: Store metadata about releases, metrics, and epics
 - **Git Refs**: Custom references for dependency tracking
@@ -278,7 +278,7 @@ class CustomProvider(ProviderInterface):
 ### 2. Hook System
 
 ```bash
-# .orchestrator/hooks/pre-release.sh
+# .octo/hooks/pre-release.sh
 #!/bin/bash
 # Custom pre-release checks
 ```
@@ -286,7 +286,7 @@ class CustomProvider(ProviderInterface):
 ### 3. Plugin Architecture
 
 ```yaml
-# .orchestrator/plugins.yaml
+# .octo/plugins.yaml
 plugins:
   - name: security-scanner
     trigger: pre-release
@@ -322,7 +322,7 @@ def execute_release_plan(plan, dry_run=False):
 
 ### 3. State Reconciliation
 
-The orchestrator can detect and reconcile inconsistent states:
+The octo can detect and reconcile inconsistent states:
 
 - Version mismatches
 - Incomplete releases

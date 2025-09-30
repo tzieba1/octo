@@ -88,7 +88,7 @@ prepare_repository() {
 
 # Create release plan
 create_release_plan() {
-    cat > ".orchestrator/releases/$VERSION.yaml" << EOF
+    cat > ".octo/releases/$VERSION.yaml" << EOF
 release:
   version: $VERSION
   branch: $RELEASE_BRANCH
@@ -125,7 +125,7 @@ echo
 repos_list=$(get_repositories)
 
 # Create release tracking
-mkdir -p .orchestrator/releases
+mkdir -p .octo/releases
 create_release_plan "$repos_list"
 
 # Prepare each repository

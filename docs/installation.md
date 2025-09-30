@@ -152,13 +152,13 @@ python3 -m pip --version
 ### Step 1: Clone the Repository
 
 ```bash
-# Clone the orchestrator repository
-git clone https://github.com/yourorg/repo-orchestrator.git
-cd repo-orchestrator
+# Clone the octo repository
+git clone https://github.com/yourorg/repo-octo.git
+cd repo-octo
 
 # Or if you're initializing from scratch
-mkdir repo-orchestrator
-cd repo-orchestrator
+mkdir repo-octo
+cd repo-octo
 git init
 ```
 
@@ -182,7 +182,7 @@ less scripts/bootstrap.sh
 The bootstrap script performs the following operations:
 
 1. **Prerequisite Check**: Validates required tools (git, python3, gh, jq, yq)
-2. **Directory Creation**: Sets up orchestrator directory structure
+2. **Directory Creation**: Sets up octo directory structure
 3. **Git Initialization**: Configures git repository, hooks, and notes
 4. **Python Environment**: Creates virtual environment and installs dependencies
 5. **Configuration**: Generates initial configuration files
@@ -197,7 +197,7 @@ source venv/bin/activate
 
 # Verify activation (prompt should show (venv))
 which python3
-# Should output: /path/to/repo-orchestrator/venv/bin/python3
+# Should output: /path/to/repo-octo/venv/bin/python3
 
 # Verify packages are installed
 pip list | grep -E "(pyyaml|semantic-version|networkx)"
@@ -210,7 +210,7 @@ pip list | grep -E "(pyyaml|semantic-version|networkx)"
 ./scripts/validate-setup.sh
 
 # Test core functionality
-python3 -c "from orchestrator import DependencyResolver; print('✓ Imports working')"
+python3 -c "from octo import DependencyResolver; print('✓ Imports working')"
 
 # Test CLI
 python3 scripts/orchestrate.py --help
@@ -263,12 +263,12 @@ git config --unset-all notes.displayRef
 Invalid commit message format!
 ```
 
-**Context:** The orchestrator enforces conventional commit messages. The bootstrap script's initial commit must follow this format.
+**Context:** The octo enforces conventional commit messages. The bootstrap script's initial commit must follow this format.
 
 **Solution:** The bootstrap script should use:
 
 ```bash
-git commit -m "chore(bootstrap): initialize orchestrator environment"
+git commit -m "chore(bootstrap): initialize octo environment"
 ```
 
 If you need to commit manually:
@@ -413,7 +413,7 @@ which python3 | grep venv            # ✓ Points to venv
 python3 -c "import yaml, networkx, semantic_version, matplotlib"  # ✓ No errors
 
 # 3. Orchestrator modules
-python3 -c "from orchestrator import VersionCoordinator, DependencyResolver"  # ✓ No errors
+python3 -c "from octo import VersionCoordinator, DependencyResolver"  # ✓ No errors
 
 # 4. Configuration files
 ls configs/repositories.yaml         # ✓ Exists
@@ -447,10 +447,10 @@ pre-commit install 2>/dev/null || echo "pre-commit not available"
 pytest tests/ -v
 
 # Check code formatting
-black --check orchestrator/ tests/
+black --check octo/ tests/
 
 # Run linter
-flake8 orchestrator/ --max-line-length=100
+flake8 octo/ --max-line-length=100
 ```
 
 ## Docker Alternative
@@ -459,17 +459,17 @@ For containerized deployment:
 
 ```bash
 # Build Docker image
-docker build -t repo-orchestrator:latest .
+docker build -t repo-octo:latest .
 
-# Run orchestrator in container
+# Run octo in container
 docker run -it --rm \
   -v $(pwd):/workspace \
   -v ~/.ssh:/root/.ssh:ro \
   -v ~/.gitconfig:/root/.gitconfig:ro \
-  repo-orchestrator:latest
+  repo-octo:latest
 
 # Run specific command
-docker run --rm repo-orchestrator:latest \
+docker run --rm repo-octo:latest \
   python3 scripts/orchestrate.py health
 ```
 
@@ -492,21 +492,21 @@ export GITEA_TOKEN=xxxxxxxxxxxxx
 export GITEA_API_URL=https://gitea.example.com/api/v1
 
 # Orchestrator configuration
-export ORCHESTRATOR_HOME=/path/to/orchestrator
-export PYTHONPATH=$ORCHESTRATOR_HOME:$PYTHONPATH
+export OCTO_HOME=/path/to/octo
+export PYTHONPATH=$OCTO_HOME:$PYTHONPATH
 ```
 
 ## Uninstallation
 
-To completely remove the orchestrator:
+To completely remove the octo:
 
 ```bash
 # Deactivate virtual environment
 deactivate
 
-# Remove orchestrator directory
+# Remove octo directory
 cd ..
-rm -rf repo-orchestrator
+rm -rf repo-octo
 
 # Optional: Remove global git configurations
 git config --global --unset-all notes.displayRef
@@ -517,7 +517,7 @@ git config --global --unset-all notes.displayRef
 After successful installation:
 
 1. **Configure repositories**: Update `configs/repositories.yaml` with your actual repositories
-2. **Clone repositories**: Use the orchestrator to clone and manage your repos
+2. **Clone repositories**: Use the octo to clone and manage your repos
 3. **Create feature branches**: Test cross-repository branch creation
 4. **Run health checks**: Monitor repository health and metrics
 5. **Coordinate releases**: Perform a dry-run release to test the workflow

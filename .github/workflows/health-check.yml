@@ -43,7 +43,7 @@ jobs:
         id: health
         run: |
           python << 'EOF'
-          from orchestrator import RepoHealthMonitor
+          from octo import RepoHealthMonitor
           
           monitor = RepoHealthMonitor()
           report = monitor.generate_health_report()

@@ -99,7 +99,7 @@ git checkout -b "orchestrate/feature-$FEATURE_NAME" 2>/dev/null || \
 git checkout "orchestrate/feature-$FEATURE_NAME"
 
 # Create tracking file
-cat > ".orchestrator/features/$FEATURE_NAME.yaml" << EOF
+cat > ".octo/features/$FEATURE_NAME.yaml" << EOF
 feature:
   name: $FEATURE_NAME
   base: $BASE_BRANCH
@@ -109,8 +109,8 @@ $(for repo in $repos_list; do echo "    - $repo"; done)
   status: active
 EOF
 
-mkdir -p .orchestrator/features
-git add ".orchestrator/features/$FEATURE_NAME.yaml"
+mkdir -p .octo/features
+git add ".octo/features/$FEATURE_NAME.yaml"
 git commit -m "orchestration: Start feature $FEATURE_NAME" || true
 
 echo

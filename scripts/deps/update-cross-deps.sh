@@ -82,7 +82,7 @@ for dep in dependents:
     except FileNotFoundError:
         pass
 
-# Update orchestrator config
+# Update octo config
 config['repositories']['$SOURCE_REPO']['version'] = '${NEW_VERSION#v}'
 
 with open('configs/repositories.yaml', 'w') as f:

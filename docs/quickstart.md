@@ -20,7 +20,7 @@ gh --version         # latest (optional)
 For Ubuntu/Debian systems with all prerequisites:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/yourorg/repo-orchestrator/main/scripts/quick-install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/yourorg/repo-octo/main/scripts/quick-install.sh | bash
 ```
 
 ## Manual Installation
@@ -38,8 +38,8 @@ brew install python git jq
 ### 2. Clone and Bootstrap
 
 ```bash
-git clone https://github.com/yourorg/repo-orchestrator.git
-cd repo-orchestrator
+git clone https://github.com/yourorg/repo-octo.git
+cd repo-octo
 ./scripts/bootstrap.sh
 ```
 

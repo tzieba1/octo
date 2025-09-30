@@ -169,13 +169,13 @@ fi
 # Orchestrator Modules
 print_header "Orchestrator Modules"
 
-debug "Checking orchestrator modules..."
+debug "Checking octo modules..."
 if python3 --version >/dev/null 2>&1; then
     MODULES=(
-        "orchestrator.version_manager:VersionCoordinator"
-        "orchestrator.dependency_graph:DependencyResolver"
-        "orchestrator.tracker:IssueTracker"
-        "orchestrator.monitor:RepoHealthMonitor"
+        "octo.version_manager:VersionCoordinator"
+        "octo.dependency_graph:DependencyResolver"
+        "octo.tracker:IssueTracker"
+        "octo.monitor:RepoHealthMonitor"
     )
     
     for mod in "${MODULES[@]}"; do
@@ -200,7 +200,7 @@ debug "Checking configuration files..."
 CONFIGS=(
     "configs/repositories.yaml"
     "configs/tracker.yaml"
-    ".orchestrator/self.yaml"
+    ".octo/self.yaml"
 )
 
 for config in "${CONFIGS[@]}"; do
@@ -221,8 +221,8 @@ print_header "Directory Structure"
 
 debug "Checking directory structure..."
 DIRS=(
-    ".orchestrator"
-    "orchestrator/providers"
+    ".octo"
+    "octo/providers"
     "scripts/version"
     "scripts/branch"
     "scripts/release"
@@ -282,7 +282,7 @@ for hook in "${HOOKS[@]}"; do
             check_warn "$hook hook not executable" "Run: chmod +x .git/hooks/$hook"
         fi
     else
-        check_warn "$hook hook missing (optional)" "Copy from .orchestrator/hooks/"
+        check_warn "$hook hook missing (optional)" "Copy from .octo/hooks/"
     fi
 done
 
@@ -292,7 +292,7 @@ print_header "Functional Tests"
 debug "Running functional tests..."
 if python3 --version >/dev/null 2>&1; then
     # Test dependency resolution
-    if python3 -c "from orchestrator import DependencyResolver; r = DependencyResolver(); r.get_build_order()" 2>/dev/null; then
+    if python3 -c "from octo import DependencyResolver; r = DependencyResolver(); r.get_build_order()" 2>/dev/null; then
         check_pass "Dependency resolution works"
     else
         check_fail "Dependency resolution failed" "Check repositories.yaml"
@@ -310,7 +310,7 @@ if python3 --version >/dev/null 2>&1; then
     fi
     
     # Test version coordination
-    if python3 -c "from orchestrator import VersionCoordinator; v = VersionCoordinator()" 2>/dev/null; then
+    if python3 -c "from octo import VersionCoordinator; v = VersionCoordinator()" 2>/dev/null; then
         check_pass "Version coordination works"
     else
         check_fail "Version coordination failed" "Check dependencies"

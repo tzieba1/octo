@@ -1,6 +1,6 @@
 #!/bin/bash
 # hooks/pre-commit
-# Pre-commit hook for orchestrator validation
+# Pre-commit hook for octo validation
 
 set -e
 
@@ -21,9 +21,9 @@ if [ -f configs/repositories.yaml ]; then
 fi
 
 # Check for dependency conflicts
-if [ -f orchestrator/dependency_graph.py ]; then
+if [ -f octo/dependency_graph.py ]; then
     python3 -c "
-from orchestrator.dependency_graph import DependencyResolver
+from octo.dependency_graph import DependencyResolver
 resolver = DependencyResolver()
 cycles = resolver.check_circular_dependencies()
 if cycles:
@@ -36,9 +36,9 @@ fi
 
 # Check Python code formatting (if black is installed)
 if command -v black &> /dev/null; then
-    black --check orchestrator/*.py 2>/dev/null || {
+    black --check octo/*.py 2>/dev/null || {
         echo -e "${YELLOW}Warning: Python code not formatted${NC}"
-        echo "Run: black orchestrator/*.py"
+        echo "Run: black octo/*.py"
     }
 fi
 

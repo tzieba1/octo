@@ -33,8 +33,8 @@ help:
 	@echo "  make clean        - Clean temporary files"
 	@echo ""
 	@echo "Docker:"
-	@echo "  make docker-build - Build orchestrator Docker image"
-	@echo "  make docker-run   - Run orchestrator in Docker"
+	@echo "  make docker-build - Build octo Docker image"
+	@echo "  make docker-run   - Run octo in Docker"
 
 # Setup & Installation
 bootstrap:
@@ -87,7 +87,7 @@ health:
 
 metrics:
 	@echo "📈 Collecting metrics..."
-	@python3 -c "from orchestrator import RepoHealthMonitor; \
+	@python3 -c "from octo import RepoHealthMonitor; \
 		monitor = RepoHealthMonitor(); \
 		metrics = monitor.collect_metrics(); \
 		print(f\"Health Score: {metrics['health_score']:.1f}/100\")"
@@ -138,7 +138,7 @@ test:
 
 test-cov:
 	@echo "🧪 Running tests with coverage..."
-	@pytest tests/ --cov=orchestrator --cov-report=term-missing --cov-report=html
+	@pytest tests/ --cov=octo --cov-report=term-missing --cov-report=html
 
 test-watch:
 	@echo "👀 Running tests in watch mode..."
@@ -146,13 +146,13 @@ test-watch:
 
 lint:
 	@echo "🔍 Running linters..."
-	@flake8 orchestrator/ --max-line-length=100 --ignore=E203,W503
-	@mypy orchestrator/ --ignore-missing-imports
+	@flake8 octo/ --max-line-length=100 --ignore=E203,W503
+	@mypy octo/ --ignore-missing-imports
 
 format:
 	@echo "✨ Formatting code..."
-	@black orchestrator/ tests/ scripts/*.py
-	@isort orchestrator/ tests/ scripts/*.py
+	@black octo/ tests/ scripts/*.py
+	@isort octo/ tests/ scripts/*.py
 
 clean:
 	@echo "🧹 Cleaning up..."
@@ -182,15 +182,15 @@ branch-sync:
 # Docker
 docker-build:
 	@echo "🐳 Building Docker image..."
-	@docker build -t repo-orchestrator:latest .
+	@docker build -t repo-octo:latest .
 
 docker-run:
-	@echo "🐳 Running orchestrator in Docker..."
+	@echo "🐳 Running octo in Docker..."
 	@docker run -it --rm \
 		-v $(PWD):/workspace \
 		-v ~/.ssh:/root/.ssh:ro \
 		-v ~/.gitconfig:/root/.gitconfig:ro \
-		repo-orchestrator:latest
+		repo-octo:latest
 
 # Git hooks
 install-hooks:
@@ -204,13 +204,13 @@ validate:
 	@echo "✓ Validating configuration..."
 	@python3 -c "import yaml; yaml.safe_load(open('configs/repositories.yaml'))"
 	@python3 -c "import yaml; yaml.safe_load(open('configs/tracker.yaml'))"
-	@python3 -c "import yaml; yaml.safe_load(open('.orchestrator/self.yaml'))"
+	@python3 -c "import yaml; yaml.safe_load(open('.octo/self.yaml'))"
 	@echo "✅ All configurations valid"
 
 # Visualization
 visualize:
 	@echo "📊 Generating dependency graph..."
-	@python3 -c "from orchestrator import DependencyResolver; \
+	@python3 -c "from octo import DependencyResolver; \
 		resolver = DependencyResolver(); \
 		resolver.visualize_graph('dependency_graph.png'); \
 		print('✅ Graph saved to dependency_graph.png')"
@@ -218,7 +218,7 @@ visualize:
 # Interactive shell
 shell:
 	@echo "🐚 Starting interactive Python shell..."
-	@python3 -i -c "from orchestrator import *; \
+	@python3 -i -c "from octo import *; \
 		print('Orchestrator modules loaded'); \
 		print('Available: VersionCoordinator, DependencyResolver, IssueTracker, RepoHealthMonitor')"
 
@@ -243,8 +243,8 @@ version-tag:
 
 # Emergency commands
 emergency-stop:
-	@echo "🛑 Emergency stop - killing all orchestrator processes..."
-	@pkill -f "orchestrator" || true
+	@echo "🛑 Emergency stop - killing all octo processes..."
+	@pkill -f "octo" || true
 	@pkill -f "orchestrate.py" || true
 	@echo "✅ All processes stopped"
 

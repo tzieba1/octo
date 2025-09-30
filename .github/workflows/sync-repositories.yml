@@ -25,7 +25,7 @@ jobs:
         run: |
           python << 'EOF'
           import yaml
-          from orchestrator import DependencyResolver
+          from octo import DependencyResolver
           
           # Validate YAML
           with open('configs/repositories.yaml') as f:
@@ -47,7 +47,7 @@ jobs:
       - name: Generate dependency graph
         run: |
           python << 'EOF'
-          from orchestrator import DependencyResolver
+          from octo import DependencyResolver
           
           resolver = DependencyResolver()
           resolver.visualize_graph('dependency_graph.png')

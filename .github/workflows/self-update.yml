@@ -29,7 +29,7 @@ jobs:
           
           if [ -n "$VERSION" ]; then
               # Update self version
-              yq e ".orchestrator.version = \"${VERSION#v}\"" -i .orchestrator/self.yaml
+              yq e ".octo.version = \"${VERSION#v}\"" -i .octo/self.yaml
               
               # Create tag
               git tag -a "$VERSION" -m "Release $VERSION"
@@ -48,12 +48,12 @@ jobs:
           from datetime import datetime
           
           # Update README with current version
-          with open('.orchestrator/self.yaml') as f:
+          with open('.octo/self.yaml') as f:
               config = yaml.safe_load(f)
           
-          version = config['orchestrator']['version']
+          version = config['octo']['version']
           
           # Update badge in README if it exists
           # This is a placeholder for actual documentation update
-          print(f"Current orchestrator version: v{version}")
+          print(f"Current octo version: v{version}")
           EOF

@@ -106,7 +106,7 @@ backend (1.2.0 → 1.3.0)
 #### Production Deployment
 
 ```bash
-# 1. Pull latest orchestrator updates
+# 1. Pull latest octo updates
 git pull origin main
 
 # 2. Prepare release
@@ -181,4 +181,4 @@ For questions or issues related to this release:
 
 ---
 
-*Released by Repo Orchestrator v{{ORCHESTRATOR_VERSION}}*
+*Released by Repo Orchestrator v{{OCTO_VERSION}}*

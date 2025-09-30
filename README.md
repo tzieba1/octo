@@ -25,9 +25,9 @@ A powerful Git-based system for orchestrating multiple repositories with complex
 ### 1. Bootstrap the Orchestrator
 
 ```bash
-# Clone the orchestrator
-git clone https://github.com/tzieba1/repo-orchestrator.git
-cd repo-orchestrator
+# Clone the octo
+git clone https://github.com/yourusername/repo-octo.git
+cd repo-octo
 
 # Run bootstrap script
 ./scripts/bootstrap.sh
@@ -145,9 +145,9 @@ done
 ### Directory Structure
 
 ```
-repo-orchestrator/
-├── .orchestrator/          # Self-management configuration
-├── orchestrator/           # Python orchestration modules
+repo-octo/
+├── .octo/          # Self-management configuration
+├── octo/           # Python orchestration modules
 │   ├── version_manager.py  # Version coordination
 │   ├── dependency_graph.py # Dependency resolution
 │   ├── tracker.py          # Issue tracking
@@ -168,7 +168,7 @@ repo-orchestrator/
 
 ### Dependency Resolution
 
-The orchestrator uses a directed graph to track dependencies:
+The octo uses a directed graph to track dependencies:
 
 ```mermaid
 graph TD

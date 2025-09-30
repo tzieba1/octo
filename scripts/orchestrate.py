@@ -6,7 +6,7 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from orchestrator import VersionCoordinator, DependencyResolver, IssueTracker, RepoHealthMonitor
+from octo import VersionCoordinator, DependencyResolver, IssueTracker, RepoHealthMonitor
 
 @click.group()
 def cli():

@@ -49,7 +49,7 @@ jobs:
           python << 'EOF'
           import json
           import yaml
-          from orchestrator import VersionCoordinator
+          from octo import VersionCoordinator
           
           coordinator = VersionCoordinator()
           plan = coordinator.coordinate_release(
@@ -81,7 +81,7 @@ jobs:
       max-parallel: 1
     
     steps:
-      - name: Checkout orchestrator
+      - name: Checkout octo
         uses: actions/checkout@v4
       
       - name: Checkout repository
@@ -94,7 +94,7 @@ jobs:
       - name: Configure Git
         run: |
           git config --global user.name "Repo Orchestrator"
-          git config --global user.email "orchestrator@example.com"
+          git config --global user.email "octo@example.com"
       
       - name: Execute release
         run: |

@@ -18,9 +18,9 @@ git notes --ref=commits add -f -m "{
 
 # Check if this affects versioning
 if git diff-tree --no-commit-id --name-only -r "$commit_hash" | grep -q "version\|package.json\|setup.py"; then
-    echo "Version files changed - updating orchestrator tracking"
+    echo "Version files changed - updating octo tracking"
     
-    # Update orchestrator version tracking
+    # Update octo version tracking
     python3 -c "
 import subprocess
 import yaml

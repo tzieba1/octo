@@ -57,10 +57,10 @@ htmlcov/
 repos/
 !repos/.gitkeep
 configs/dependencies.lock
-.orchestrator/features/
-.orchestrator/releases/
-.orchestrator/rollbacks/
-.orchestrator/hotfixes/
+.octo/features/
+.octo/releases/
+.octo/rollbacks/
+.octo/hotfixes/
 *.log
 *.pid
 

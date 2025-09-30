@@ -79,8 +79,8 @@ rollback_repository() {
 
 # Create rollback record
 create_rollback_record() {
-    mkdir -p .orchestrator/rollbacks
-    cat > ".orchestrator/rollbacks/$(date +%Y%m%d-%H%M%S).yaml" << EOF
+    mkdir -p .octo/rollbacks
+    cat > ".octo/rollbacks/$(date +%Y%m%d-%H%M%S).yaml" << EOF
 rollback:
   from_version: $VERSION
   to_version: $TARGET_VERSION
@@ -118,7 +118,7 @@ echo -e "${RED}═══ ROLLBACK COMPLETE ═══${NC}"
 echo "Actions taken:"
 echo "  - Rolled back to version $TARGET_VERSION"
 echo "  - Created rollback tags"
-echo "  - Recorded rollback in orchestrator"
+echo "  - Recorded rollback in octo"
 echo
 echo -e "${YELLOW}Post-rollback tasks:${NC}"
 echo "  1. Verify services are running correctly"

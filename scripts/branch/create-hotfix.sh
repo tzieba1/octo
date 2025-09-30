@@ -125,8 +125,8 @@ for repo in $repos_list; do
 done
 
 # Create hotfix tracking
-mkdir -p .orchestrator/hotfixes
-cat > ".orchestrator/hotfixes/$HOTFIX_NAME.yaml" << EOF
+mkdir -p .octo/hotfixes
+cat > ".octo/hotfixes/$HOTFIX_NAME.yaml" << EOF
 hotfix:
   name: $HOTFIX_NAME
   target_version: $TARGET_VERSION

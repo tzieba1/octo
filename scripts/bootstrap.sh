@@ -1,5 +1,5 @@
 #!/bin/bash
-# Bootstrap script for repo-orchestrator
+# Bootstrap script for repo-octo
 
 set -e  # Exit on error
 
@@ -84,10 +84,10 @@ init_repository() {
     log_success "Git notes configured"
     
     # Set up git hooks
-    if [ -d .orchestrator/hooks/ ]; then
+    if [ -d .octo/hooks/ ]; then
         log_info "Installing git hooks..."
         mkdir -p .git/hooks
-        cp .orchestrator/hooks/*.sh .git/hooks/
+        cp .octo/hooks/*.sh .git/hooks/
         # Remove .sh extension for git hooks
         for hook in .git/hooks/*.sh; do
             mv "$hook" "${hook%.sh}"
@@ -103,8 +103,8 @@ create_directory_structure() {
     
     # Create main directories
     directories=(
-        ".orchestrator"
-        "orchestrator/providers"
+        ".octo"
+        "octo/providers"
         "scripts/version"
         "scripts/branch"
         "scripts/release"
@@ -173,10 +173,10 @@ EOF
 create_initial_config() {
     log_info "Creating initial configuration..."
     
-    # Create orchestrator self-config
-    if [ ! -f ".orchestrator/self.yaml" ]; then
-        cat > .orchestrator/self.yaml << 'EOF'
-orchestrator:
+    # Create octo self-config
+    if [ ! -f ".octo/self.yaml" ]; then
+        cat > .octo/self.yaml << 'EOF'
+octo:
   version: 0.1.0
   bootstrap:
     hooks:
@@ -198,7 +198,7 @@ orchestrator:
           - update-dependencies
           - sync-configurations
 EOF
-        log_success "Created orchestrator self-config"
+        log_success "Created octo self-config"
     fi
     
     # Create repositories config
@@ -299,7 +299,7 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from orchestrator import VersionCoordinator, DependencyResolver, IssueTracker, RepoHealthMonitor
+from octo import VersionCoordinator, DependencyResolver, IssueTracker, RepoHealthMonitor
 
 @click.group()
 def cli():
@@ -372,14 +372,14 @@ init_self_management() {
         log_info "No changes to commit (already initialized)"
     else
         # Commit with proper conventional format
-        git commit -m "chore(bootstrap): initialize orchestrator environment
+        git commit -m "chore(bootstrap): initialize octo environment
 
 Initialize repository with:
 - Directory structure for multi-repo orchestration
 - Git hooks for conventional commits and version tracking
 - Python virtual environment with dependencies
 - Configuration templates for repositories and tracking
-- Initial orchestrator self-management setup
+- Initial octo self-management setup
 
 Refs: #init" 2>/dev/null || {
             log_warning "Commit failed - may already be initialized"
@@ -390,7 +390,7 @@ Refs: #init" 2>/dev/null || {
     
     # Create version tag if it doesn't exist
     if ! git rev-parse v0.1.0 >/dev/null 2>&1; then
-        git tag -a v0.1.0 -m "chore: release orchestrator v0.1.0" 2>/dev/null || {
+        git tag -a v0.1.0 -m "chore: release octo v0.1.0" 2>/dev/null || {
             log_warning "Tag v0.1.0 may already exist"
             return 0
         }

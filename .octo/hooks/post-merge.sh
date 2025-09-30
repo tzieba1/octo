@@ -10,11 +10,11 @@ if git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD | grep -E "package
     echo "  ./scripts/deps/install-deps.sh"
 fi
 
-# Check if orchestrator config changed
+# Check if octo config changed
 if git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD | grep "configs/repositories.yaml" > /dev/null; then
     echo "Repository configuration changed - updating dependency graph..."
     python3 -c "
-from orchestrator.dependency_graph import DependencyResolver
+from octo.dependency_graph import DependencyResolver
 resolver = DependencyResolver()
 resolver.visualize_graph('dependency_graph.png')
 print('Dependency graph updated: dependency_graph.png')

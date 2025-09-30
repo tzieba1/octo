@@ -48,7 +48,7 @@ We support semantic versioning with the following operators:
 
 ### Resolution Strategy
 
-The orchestrator uses a directed acyclic graph (DAG) to resolve dependencies:
+The octo uses a directed acyclic graph (DAG) to resolve dependencies:
 
 1. **Build Graph**: Construct dependency graph from configuration
 2. **Detect Cycles**: Check for circular dependencies
@@ -58,7 +58,7 @@ The orchestrator uses a directed acyclic graph (DAG) to resolve dependencies:
 ### Example Resolution
 
 ```python
-from orchestrator import DependencyResolver
+from octo import DependencyResolver
 
 resolver = DependencyResolver()
 
@@ -127,7 +127,7 @@ repositories:
 
 ### Automatic Detection
 
-The orchestrator automatically detects version conflicts:
+The octo automatically detects version conflicts:
 
 ```python
 conflicts = resolver.resolve_version_conflicts()
@@ -165,7 +165,7 @@ dependency_rules:
 make visualize
 
 # Or using Python
-python -c "from orchestrator import DependencyResolver; \
+python -c "from octo import DependencyResolver; \
   resolver = DependencyResolver(); \
   resolver.visualize_graph('deps.png')"
 ```
@@ -290,7 +290,7 @@ dependencies:
 DEBUG=1 ./scripts/deps/track-dependencies.sh check
 
 # Analyze specific repository
-python -c "from orchestrator import DependencyResolver; \
+python -c "from octo import DependencyResolver; \
   r = DependencyResolver(); \
   print(r.get_dependency_tree('backend'))"
 ```

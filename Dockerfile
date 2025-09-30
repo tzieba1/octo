@@ -49,12 +49,12 @@ ENV PATH=/root/.local/bin:$PATH
 # Set working directory
 WORKDIR /workspace
 
-# Copy orchestrator code
-COPY orchestrator/ ./orchestrator/
+# Copy octo code
+COPY octo/ ./octo/
 COPY scripts/ ./scripts/
 COPY hooks/ ./hooks/
 COPY configs/ ./configs/
-COPY .orchestrator/ ./.orchestrator/
+COPY .octo/ ./.octo/
 COPY templates/ ./templates/
 
 # Make scripts executable
@@ -65,22 +65,22 @@ RUN mkdir -p repos .github/workflows docs tests
 
 # Set environment variables
 ENV PYTHONPATH=/workspace:$PYTHONPATH
-ENV ORCHESTRATOR_HOME=/workspace
+ENV OCTO_HOME=/workspace
 
 # Git configuration
 RUN git config --global user.name "Repo Orchestrator" \
-    && git config --global user.email "orchestrator@example.com" \
+    && git config --global user.email "octo@example.com" \
     && git config --global init.defaultBranch main
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD python3 -c "from orchestrator import VersionCoordinator; print('OK')" || exit 1
+    CMD python3 -c "from octo import VersionCoordinator; print('OK')" || exit 1
 
 # Default command
 CMD ["/bin/bash"]
 
 # Labels
-LABEL maintainer="orchestrator@example.com"
+LABEL maintainer="octo@example.com"
 LABEL version="0.1.0"
 LABEL description="Multi-repository orchestration system"
 
