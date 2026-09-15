@@ -26,7 +26,7 @@ A powerful Git-based system for orchestrating multiple repositories with complex
 
 ```bash
 # Clone the orchestrator
-git clone https://github.com/yourusername/repo-orchestrator.git
+git clone https://github.com/tzieba1/repo-orchestrator.git
 cd repo-orchestrator
 
 # Run bootstrap script
