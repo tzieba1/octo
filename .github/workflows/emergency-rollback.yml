@@ -62,24 +62,24 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-              await github.rest.issues.create({
+            await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
               title: `🚨 Emergency Rollback: ${{ inputs.current_version }} → ${{ inputs.target_version }}`,
-                    body: `## Emergency Rollback Executed
-      
-      **From Version:** ${{ inputs.current_version }}
-      **To Version:** ${{ inputs.target_version }}
-      **Repositories:** ${{ inputs.repositories }}
-      **Timestamp:** ${new Date().toISOString()}
-      **Initiated by:** @${context.actor}
-      
-      ### Next Steps
-      - [ ] Verify services are running correctly
-      - [ ] Check monitoring dashboards
-      - [ ] Create incident report
-      - [ ] Identify root cause
-      - [ ] Plan forward fix
-      `,
-            labels: ['incident', 'rollback', 'critical']
-          });
+              body: `## Emergency Rollback Executed
+
+            **From Version:** ${{ inputs.current_version }}
+            **To Version:** ${{ inputs.target_version }}
+            **Repositories:** ${{ inputs.repositories }}
+            **Timestamp:** ${new Date().toISOString()}
+            **Initiated by:** @${context.actor}
+
+            ### Next Steps
+            - [ ] Verify services are running correctly
+            - [ ] Check monitoring dashboards
+            - [ ] Create incident report
+            - [ ] Identify root cause
+            - [ ] Plan forward fix
+            `,
+              labels: ['incident', 'rollback', 'critical']
+            });
