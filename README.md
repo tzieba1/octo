@@ -1,6 +1,10 @@
-# Repo Orchestrator
+# 🐙 octo
 
 A powerful Git-based system for orchestrating multiple repositories with complex dependencies, coordinated releases, and cross-repository project management.
+
+## Why "octo"?
+
+The name blends **orch**estration with the octopus mascot 🐙 — a fitting metaphor for what this tool does. An octopus coordinates eight independent arms at once, each acting semi-autonomously while the whole animal moves with purpose. `octo` does the same for your repositories: its many "tentacles" reach into every repo in the system and orchestrate them in parallel — syncing branches, resolving cross-repo dependencies, coordinating releases, and monitoring health — all managed as one cohesive, multi-tasking whole.
 
 ## 🚀 Features
 
@@ -25,9 +29,9 @@ A powerful Git-based system for orchestrating multiple repositories with complex
 ### 1. Bootstrap the Orchestrator
 
 ```bash
-# Clone the octo
-git clone https://github.com/yourusername/repo-octo.git
-cd repo-octo
+# Clone octo
+git clone https://github.com/tzieba1/octo.git
+cd octo
 
 # Run bootstrap script
 ./scripts/bootstrap.sh
@@ -145,7 +149,7 @@ done
 ### Directory Structure
 
 ```
-repo-octo/
+octo/
 ├── .octo/          # Self-management configuration
 ├── octo/           # Python orchestration modules
 │   ├── version_manager.py  # Version coordination
